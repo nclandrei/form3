@@ -1,32 +1,60 @@
 package form3
 
-import "github.com/google/uuid"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
+
+var (
+	InvalidModelErr = errors.New("invalid model")
+)
+
+type ValidatableModel interface {
+	Valid() (bool, error)
+}
 
 // OrganisationAccount represents a bank account that is registered with Form3.
 // It is used to validate and allocate inbound payments.
 type OrganisationAccount struct {
-	ID             uuid.UUID
-	Type           string
-	OrganisationID uuid.UUID
-	Version        int
-	Attributes     OrganisationAccountAttributes
+	ID             uuid.UUID                     `json:"id"`
+	Type           string                        `json:"type"`
+	OrganisationID uuid.UUID                     `json:"organisation_id"`
+	Version        int                           `json:"version"`
+	Attributes     OrganisationAccountAttributes `json:"attributes"`
+}
+
+func (oa OrganisationAccount) Valid() (bool, error) {
+	if oa.Type != "accounts" {
+		return false, InvalidModelErr
+	}
+
+	if _, err := oa.Attributes.Valid(); err != nil {
+		return false, InvalidModelErr
+	}
+
+	return true, nil
 }
 
 // OrganisationAccountAttributes represent various attributes that can be included
 // inside the organisation account entity.
 type OrganisationAccountAttributes struct {
-	Country                 string
-	BaseCurrency            string
-	AccountNumber           string
-	BankID                  string
-	BankIDCode              string
-	BIC                     string
-	IBAN                    string
-	Name                    []string
-	AlternativeNames        []string
-	AccountClasification    string
-	JointAccount            bool
-	AccountMatchingOptOut   bool
-	SecondaryIdentification string
-	Switched                bool
+	Country                 string   `json:"country"`
+	BaseCurrency            string   `json:"base_currency"`
+	AccountNumber           string   `json:"account_number"`
+	BankID                  string   `json:"bank_id"`
+	BankIDCode              string   `json:"bank_id_code"`
+	BIC                     string   `json:"bic"`
+	IBAN                    string   `json:"iban"`
+	Name                    []string `json:"name"`
+	AlternativeNames        []string `json:"alternative_names"`
+	AccountClassification   string   `json:"account_classification"`
+	JointAccount            bool     `json:"joint_account"`
+	AccountMatchingOptOut   bool     `json:"account_matching_opt_out"`
+	SecondaryIdentification string   `json:"secondary_identification"`
+	Switched                bool     `json:"switched"`
+}
+
+func (oaa OrganisationAccountAttributes) Valid() (bool, error) {
+	return true, nil
 }
