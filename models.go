@@ -1,18 +1,8 @@
 package form3
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
 )
-
-var (
-	InvalidModelErr = errors.New("invalid model")
-)
-
-type ValidatableModel interface {
-	Valid() (bool, error)
-}
 
 // OrganisationAccount represents a bank account that is registered with Form3.
 // It is used to validate and allocate inbound payments.
@@ -22,18 +12,6 @@ type OrganisationAccount struct {
 	OrganisationID uuid.UUID                     `json:"organisation_id"`
 	Version        int                           `json:"version"`
 	Attributes     OrganisationAccountAttributes `json:"attributes"`
-}
-
-func (oa OrganisationAccount) Valid() (bool, error) {
-	if oa.Type != "accounts" {
-		return false, InvalidModelErr
-	}
-
-	if _, err := oa.Attributes.Valid(); err != nil {
-		return false, InvalidModelErr
-	}
-
-	return true, nil
 }
 
 // OrganisationAccountAttributes represent various attributes that can be included
@@ -53,8 +31,4 @@ type OrganisationAccountAttributes struct {
 	AccountMatchingOptOut   bool     `json:"account_matching_opt_out"`
 	SecondaryIdentification string   `json:"secondary_identification"`
 	Switched                bool     `json:"switched"`
-}
-
-func (oaa OrganisationAccountAttributes) Valid() (bool, error) {
-	return true, nil
 }
