@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -78,10 +80,32 @@ func (c *Client) Fetch(accountID uuid.UUID) (OrganisationAccount, error) {
 // List returns a list of organisation accounts. It can support paging,
 // which implies that the caller of the method should provide a page
 // number and its size.
-func (c *Client) List() ([]OrganisationAccount, error) {
+func (c *Client) List(loo ...ListOption) ([]OrganisationAccount, error) {
+	options := listOptions{}
+	for _, lo := range loo {
+		lo(&options)
+	}
+
+	url, err := url.Parse(fmt.Sprintf("%s/v1/organisation/accounts", c.baseURL))
+	if err != nil {
+		return nil, err
+	}
+
+	urlQuery := url.Query()
+
+	if options.pageNumber != 0 {
+		urlQuery.Set("page[number]", strconv.Itoa(options.pageNumber))
+	}
+
+	if options.pageSize != 0 {
+		urlQuery.Set("page[size]", strconv.Itoa(options.pageSize))
+	}
+
+	url.RawQuery = urlQuery.Encode()
+
 	req, err := http.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("%s/v1/organisation/accounts", c.baseURL),
+		url.String(),
 		nil,
 	)
 	if err != nil {
@@ -130,32 +154,45 @@ func (c *Client) Delete(accountID uuid.UUID, version int) error {
 	return c.checkErrorMessage(resp)
 }
 
-// Create will create a new organisation account given all the fields are correct.
-func (c *Client) Create(organisationAccount OrganisationAccount) error {
-	data := struct {
+// Create will create a new organisation account.
+func (c *Client) Create(organisationAccount OrganisationAccount) (OrganisationAccount, error) {
+	body := struct {
 		Data OrganisationAccount `json:"data"`
 	}{
 		Data: organisationAccount,
 	}
 
-	var body *bytes.Buffer
+	bodyBytes := new(bytes.Buffer)
 
-	err := json.NewEncoder(body).Encode(&data)
+	err := json.NewEncoder(bodyBytes).Encode(&body)
 	if err != nil {
-		return err
+		return OrganisationAccount{}, err
 	}
 
 	resp, err := c.performRequest(
 		http.MethodPost,
 		fmt.Sprintf("%s/v1/organisation/accounts", c.baseURL),
-		body,
+		bodyBytes,
 	)
 	if err != nil {
-		return err
+		return OrganisationAccount{}, err
 	}
 	defer resp.Body.Close()
 
-	return c.checkErrorMessage(resp)
+	err = c.checkErrorMessage(resp)
+	if err != nil {
+		return OrganisationAccount{}, err
+	}
+
+	var data struct {
+		Data OrganisationAccount `json:"data"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return OrganisationAccount{}, err
+	}
+
+	return data.Data, nil
 }
 
 // performRequest is the general method called by all exported methods of the client library

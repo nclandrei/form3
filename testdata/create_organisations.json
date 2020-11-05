@@ -1,0 +1,65 @@
+[
+	{
+		"comment": "OK org - should be created, isn't inside organisations.json",
+		"type": "accounts",
+		"id": "bacf94d4-f219-4ab3-8e50-b6eb89ee9b44",
+		"organisation_id": "39ebc8d6-2203-4cd5-9281-d4fdd75fc642",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"comment": "Not OK org - should not be created, it already is inside organisations.json",
+		"type": "accounts",
+		"id": "3c76048a-2024-4917-b911-1b3e88fccfb3",
+		"organisation_id": "d97b8dc2-bc4d-48e4-905e-9530b50580c9",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"comment": "Not OK org - invalid fields, even if id and organisation id are new",
+		"type": "accounts",
+		"id": "4531fb9b-1000-4920-a367-7ad98ff8a1b2",
+		"organisation_id": "22c58895-2e18-4f7e-a7c8-9dbb02823e14",
+		"version": 0,
+		"attributes": {
+			"country": "NOT_OK_COUNTRY",
+			"base_currency": "ASTONISHING_CURRENCY",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "ASTONISHING_IBAN",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	}
+]

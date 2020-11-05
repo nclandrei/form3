@@ -1,0 +1,102 @@
+[
+	{
+		"type": "accounts",
+		"id": "a9e3b971-a241-4930-a09f-a7c04bf394fe",
+		"organisation_id": "b6eca650-cf86-4715-b312-fcef0fec1506",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"type": "accounts",
+		"id": "3c76048a-2024-4917-b911-1b3e88fccfb3",
+		"organisation_id": "d97b8dc2-bc4d-48e4-905e-9530b50580c9",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"type": "accounts",
+		"id": "638c8f12-bc80-42b0-a970-82329990bd75",
+		"organisation_id": "651462f2-fe7e-41cc-a457-536f7814f182",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"type": "accounts",
+		"id": "9a8b77ef-08c8-4001-bfb6-77e299aee4f5",
+		"organisation_id": "e6fc6de3-a206-40a0-bb07-17dfbe92d884",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	},
+	{
+		"type": "accounts",
+		"id": "14ef482f-11d8-4f1b-a54c-36cfc31c3f58",
+		"organisation_id": "fd3cc920-7796-47ef-9610-dcf987ff8044",
+		"version": 0,
+		"attributes": {
+			"country": "GB",
+			"base_currency": "GBP",
+			"account_number": "414268190",
+			"bank_id": "400300",
+			"bank_id_code": "GBDSC",
+			"bic": "NWBKGB22",
+			"iban": "GB11NWBK40030041426819",
+			"account_classification": "Personal",
+			"joint_account": false,
+			"account_matching_opt_out": false,
+			"secondary_identification": "A1B2C3D4",
+			"switched": false
+		}
+	}
+]

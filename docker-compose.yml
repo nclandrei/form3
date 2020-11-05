@@ -1,6 +1,22 @@
-version: '3'
+version: "3"
+
+networks:
+  form3-tests:
+    driver: bridge
 
 services:
+  form3api-client:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - API_URL=http://localhost:8080
+      - TESTDATA_ORGANISATIONS_FILE_PATH=./testdata/organisations.json
+      - TESTDATA_CREATE_ORGANISATIONS_FILE_PATH=./testdata/create_organisations.json
+    depends_on:
+      - accountapi
+    networks:
+      - form3-tests
   accountapi:
     image: form3tech/interview-accountapi:v1.0.0-4-g63cf8434
     restart: on-failure
@@ -21,10 +37,12 @@ services:
       - DATABASE-PASSWORD=123
     ports:
       - 8080:8080
+    networks:
+      - form3-tests
   postgresql:
     image: postgres:9.5-alpine
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
       timeout: 45s
       interval: 10s
       retries: 10
@@ -34,9 +52,13 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./scripts/db:/docker-entrypoint-initdb.d/
+    networks:
+      - form3-tests
 
   vault:
     image: vault:0.9.3
     environment:
       - SKIP_SETCAP=1
       - VAULT_DEV_ROOT_TOKEN_ID=8fb95528-57c6-422e-9722-d2147bcba8ed
+    networks:
+      - form3-tests
