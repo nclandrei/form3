@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      - API_URL=http://localhost:8080
+      - API_BASE_URL=http://accountapi:8080
       - TESTDATA_ORGANISATIONS_FILE_PATH=./testdata/organisations.json
       - TESTDATA_CREATE_ORGANISATIONS_FILE_PATH=./testdata/create_organisations.json
     depends_on:

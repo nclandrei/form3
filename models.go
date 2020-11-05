@@ -5,15 +5,15 @@ import (
 )
 
 var (
-	// PageNumber is a List call option to set the page number.
-	PageNumber = func(pageNumber int) func(*listOptions) {
+	// PageNumberListOption is a List call option to set the page number.
+	PageNumberListOption = func(pageNumber int) func(*listOptions) {
 		return func(lo *listOptions) {
 			lo.pageNumber = pageNumber
 		}
 	}
 
-	// PageSize is a List call option to set the page size.
-	PageSize = func(pageSize int) func(*listOptions) {
+	// PageSizeListOption is a List call option to set the page size.
+	PageSizeListOption = func(pageSize int) func(*listOptions) {
 		return func(lo *listOptions) {
 			lo.pageSize = pageSize
 		}

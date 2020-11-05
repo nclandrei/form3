@@ -2,6 +2,8 @@ package form3
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -19,9 +21,9 @@ type Form3TestSuite struct {
 }
 
 // This method is run before each test and it will
-// create all the organisations insidde valid_organisations.json.
+// create all the organisations insidde valid_organisations JSON file.
 func (s *Form3TestSuite) SetupTest() {
-	s.client = NewClient(os.Getenv("BASE_URL"))
+	s.client = NewClient(os.Getenv("API_BASE_URL"))
 
 	f, err := os.Open(os.Getenv("TESTDATA_ORGANISATIONS_FILE_PATH"))
 	if err != nil {
@@ -135,8 +137,8 @@ func (s *Form3TestSuite) TestList() {
 			if tc.paging {
 				options = append(
 					options,
-					PageNumber(tc.pageNumber),
-					PageSize(tc.pageSize),
+					PageNumberListOption(tc.pageNumber),
+					PageSizeListOption(tc.pageSize),
 				)
 			}
 
@@ -268,9 +270,86 @@ func (s *Form3TestSuite) TestCreate() {
 	}
 }
 
-// func (s *Form3TestSuite) TestRateLimiter() {
+func (s *Form3TestSuite) TestRateLimiter() {
+	testCases := []struct {
+		name        string
+		expectErr   bool
+		handlerFunc func() http.HandlerFunc
+	}{
+		{
+			name:      "OK - rate limiter retries till service is available",
+			expectErr: false,
+			handlerFunc: func() http.HandlerFunc {
+				var serviceUnavailableCounter int
 
-// }
+				return func(w http.ResponseWriter, r *http.Request) {
+					if serviceUnavailableCounter == 3 {
+						data := struct {
+							Data []struct{} `json:"data"`
+						}{
+							Data: []struct{}{},
+						}
+
+						w.WriteHeader(http.StatusOK)
+
+						_ = json.NewEncoder(w).Encode(&data)
+
+						return
+					}
+
+					w.WriteHeader(http.StatusTooManyRequests)
+
+					message := struct {
+						ErrorMessage string `json:"error_message"`
+					}{
+						ErrorMessage: "Service Unavailable",
+					}
+
+					_ = json.NewEncoder(w).Encode(&message)
+
+					serviceUnavailableCounter++
+				}
+			},
+		},
+		{
+			name:      "Not OK - rate limiter sees 429 on every call, returns error",
+			expectErr: true,
+			handlerFunc: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusTooManyRequests)
+
+					message := struct {
+						ErrorMessage string `json:"error_message"`
+					}{
+						ErrorMessage: "Service Unavailable",
+					}
+
+					_ = json.NewEncoder(w).Encode(&message)
+				}
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		s.T().Run(tc.name, func(t *testing.T) {
+			mux := http.NewServeMux()
+			mux.Handle("/v1/organisation/accounts", tc.handlerFunc())
+
+			ts := httptest.NewServer(mux)
+			defer ts.Close()
+
+			client := NewClient(ts.URL)
+
+			_, err := client.List()
+
+			if tc.expectErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
 
 func TestForm3TestSuite(t *testing.T) {
 	suite.Run(t, new(Form3TestSuite))

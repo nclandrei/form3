@@ -19,11 +19,19 @@ var (
 	// retriableStatusCodes contains the status codes for which the client should retry
 	// the operation using an exponential back-off algorithm.
 	retriableStatusCodes = map[int]struct{}{
-		429: {},
-		500: {},
-		503: {},
-		504: {},
+		http.StatusTooManyRequests:     {},
+		http.StatusInternalServerError: {},
+		http.StatusServiceUnavailable:  {},
+		http.StatusGatewayTimeout:      {},
 	}
+
+	// default timeout for the inner HTTP server of the client
+	// in production would be much bigger
+
+	timeout = 10 * time.Second
+	// max elapsed time for the rate limiter to retry requests
+	// in production would be much bigger
+	backoffMaxElapsedTime = 10 * time.Second
 )
 
 // Client is the service that interacts with the Form3 API. It can perform
@@ -39,7 +47,7 @@ func NewClient(baseURL string) *Client {
 	return &Client{
 		baseURL: baseURL,
 		httpClient: http.Client{
-			Timeout: 60 * time.Second,
+			Timeout: timeout,
 		},
 	}
 }
@@ -103,16 +111,11 @@ func (c *Client) List(loo ...ListOption) ([]OrganisationAccount, error) {
 
 	url.RawQuery = urlQuery.Encode()
 
-	req, err := http.NewRequest(
+	resp, err := c.performRequest(
 		http.MethodGet,
 		url.String(),
 		nil,
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +204,9 @@ func (c *Client) Create(organisationAccount OrganisationAccount) (OrganisationAc
 // It uses an exponential back-off algorithm so that it can retry certain operations given
 // a certain set of status codes (situated inside retriableStatusCodes at the top).
 func (c *Client) performRequest(method string, url string, body io.Reader) (*http.Response, error) {
-	ticker := backoff.NewTicker(backoff.NewExponentialBackOff())
+	expBackOff := backoff.NewExponentialBackOff()
+	expBackOff.MaxElapsedTime = backoffMaxElapsedTime
+	ticker := backoff.NewTicker(expBackOff)
 
 	var req *http.Request
 	var resp *http.Response
