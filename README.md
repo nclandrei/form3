@@ -41,6 +41,10 @@ org, err = service.Create(form3.OrganisationAccount{...})
 
 In this section I will describe in more detail multiple decisions I made throughout the implementation process.
 
+### Project Structure
+
+I kept the project structure as simple as possible because we have a single entity (i.e. Organisation Accounts) that we interact with. If the project would become extensible, I would probably separate different entities into their own folder and they could share just some common functionality that would be useful across all of them (e.g. specific folder for Mandates, another folder for Claims etc.).
+
 ### Testing
 
 The test coverage is ~85% and it's not bigger because the only paths that weren't tested were mainly if the ```json``` package fails to encode/decode. Apart from that, absolutely all paths and possible responses from the API are tested.
