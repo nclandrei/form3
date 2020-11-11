@@ -25,7 +25,7 @@ It works, of course, using simply ```docker-compose up```, but the make command 
 service := form3.NewClient("http://localhost:8080")
 
 // get organisation accounts stored in Form3 using paging functionality
-orgs, err := service.List(form3.PageNumber(0), form3.PageSize(25))
+orgs, err := service.List(form3.PageNumberListOption(0), form3.PageSizeListOption(25))
 
 // remove an organisation account with the ID and version below
 err = service.Delete("f4f3fa9f-261c-458e-b032-9bfa45aa091c", 0)

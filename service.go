@@ -27,8 +27,8 @@ var (
 
 	// default timeout for the inner HTTP server of the client
 	// in production would be much bigger
-
 	timeout = 10 * time.Second
+
 	// max elapsed time for the rate limiter to retry requests
 	// in production would be much bigger
 	backoffMaxElapsedTime = 10 * time.Second
